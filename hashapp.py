@@ -104,14 +104,12 @@ def funcSHA256(database):
 
 def funcClear(database):
 	dictClear = {}
-	cesar = Caesar()
 
 	for registry in database:
 		login = registry.split("|",1)[0]
 		passwd = registry.split("|",1)[1]
 
 		passwd = re.sub('[^A-z0-9]', '', passwd)
-		passwd = cesar.decrypt(passwd)
 
 		dictClear[login] = passwd
 
@@ -143,6 +141,9 @@ def funcLoginHash(login, passwd, hashes, hashUsed):
 def funcLoginClear(login, passwd, dictClear):
 	user = dictClear.get(login)
 
+	cesar = Caesar()
+	passwd = cesar.encrypt(passwd)
+
 	if user == passwd:
 		return 1
 
@@ -173,72 +174,67 @@ if __name__ == '__main__':
 			dictSHA256 = json.load(fp)
 			hashes.append(dictSHA256)
 
-		start = time.time()
+		# start = time.time()
 
 		if funcLoginHash(sys.argv[2], sys.argv[3], hashes, int(sys.argv[4])):
 			print "Success !"
 		else:
 			print "Fail !"
 
-		done = time.time()
-		elapsed = done - start
-		print "Time elapsed (login with hash): " + str(elapsed) + " sec"
+		# done = time.time()
+		# elapsed = done - start
+		# print "Time elapsed (login with hash): " + str(elapsed) + " sec"
 	else:
 		########################MD5#############################
 
-		for i in range(0,30):
-			start = time.time()
+		# start = time.time()
 
-			dictMD5 = funcMD5(database)
-			with open("dictMD5.json", "w") as fp:
-				json.dump(dictMD5, fp, sort_keys=True, indent=4)
+		dictMD5 = funcMD5(database)
 
-			done = time.time()
-			elapsed = done - start
-			print "Time elapsed (MD5): " + str(elapsed) + " sec"
-			os.system("echo \"" + str(elapsed) + "\" >> md5Create.txt")
+		# done = time.time()
+		# elapsed = done - start
+		# print "Time elapsed (MD5): " + str(elapsed) + " sec"
 
-			hashes.append(dictMD5)
+		with open("dictMD5.json", "w") as fp:
+			json.dump(dictMD5, fp, sort_keys=True, indent=4)
 
 		########################SHA1#############################
 
-		start = time.time()
+		# start = time.time()
 
 		dictSHA1 = funcSHA1(database)
+
+		# done = time.time()
+		# elapsed = done - start
+		# print "Time elapsed (SHA1): " + str(elapsed) + " sec"
+
 		with open("dictSHA1.json", "w") as fp:
 			json.dump(dictSHA1, fp, sort_keys=True, indent=4)
 
-		done = time.time()
-		elapsed = done - start
-		print "Time elapsed (SHA1): " + str(elapsed) + " sec"
-
-		hashes.append(dictSHA1)
-
 		########################SHA256#############################
 
-		start = time.time()
+		# start = time.time()
 
 		dictSHA256 = funcSHA256(database)
+
+		# done = time.time()
+		# elapsed = done - start
+		# print "Time elapsed (SHA256): " + str(elapsed) + " sec"
+
 		with open("dictSHA256.json", "w") as fp:
 			json.dump(dictSHA256, fp, sort_keys=True, indent=4)
 
-		done = time.time()
-		elapsed = done - start
-		print "Time elapsed (SHA256): " + str(elapsed) + " sec"
-
-		hashes.append(dictSHA256)
-
 ########################LoginClear#############################
 if doLoginClear:
-	dictClear = funcClear(database)
+	# start = time.time()
 
-	start = time.time()
+	dictClear = funcClear(database)
 
 	if funcLoginClear(sys.argv[2], sys.argv[3], dictClear):
 		print "Success !"
 	else:
 		print "Fail !"
 
-	done = time.time()
-	elapsed = done - start
-	print "Time elapsed (login without hash): " + str(elapsed) + " sec"
+	# done = time.time()
+	# elapsed = done - start
+	# print "Time elapsed (login without hash): " + str(elapsed) + " sec"
